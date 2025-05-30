@@ -1,6 +1,10 @@
 # ![ ](images/logo.png) GitHub Rate Limit Monitor
 
-This Visual Studio Code extension monitors and displays your current GitHub API rate limit status in the status bar. It helps you avoid hitting GitHub's API rate limits by providing real-time feedback and alerts.
+This Visual Studio Code extension monitors and displays your current GitHub API rate limit status in the status bar. 
+
+![alt text](images/README/image.png)
+
+It helps you avoid hitting GitHub's API rate limits by providing real-time feedback and alerts.
 
 ## Features
 - Shows the number of remaining GitHub API requests in the status bar.
