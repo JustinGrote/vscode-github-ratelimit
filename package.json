@@ -1,0 +1,57 @@
+{
+	"name": "github-ratelimit",
+	"displayName": "GitHub Rate Limit Monitor",
+	"description": "Monitors and displays the GitHub API rate limit status",
+	"version": "0.0.1",
+	"publisher": "justingrote",
+	"private": true,
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/JustinGrote/vscode-github-ratelimit"
+	},
+	"bugs": {
+		"url": "https://github.com/JustinGrote/vscode-github-ratelimit/issues"
+	},
+	"engines": {
+		"vscode": "^1.100.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onStartupFinished"
+	],
+	"main": "./out/extension.js",
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.13.0",
+		"@stylistic/eslint-plugin": "^2.9.0",
+		"@types/vscode": "^1.100.0",
+		"eslint": "^9.13.0",
+		"typescript": "^5.8.2",
+		"typescript-eslint": "^8.26.0"
+	},
+	"dependencies": {
+		"@octokit/core": "^7.0.2",
+		"@octokit/request": "^10.0.2"
+	},
+	"packageManager": "pnpm@8.15.4",
+	"contributes": {
+		"configuration": {
+			"properties": {
+				"githubRateLimit.pollIntervalSeconds": {
+					"title": "GitHub Rate Limit Polling Interval",
+					"type": "number",
+					"default": 1,
+					"description": "Interval in seconds (can be fractional, e.g. 0.5) for polling the GitHub rate limit."
+				}
+			}
+		}
+	}
+}
