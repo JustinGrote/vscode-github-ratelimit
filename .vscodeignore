@@ -1,9 +1,4 @@
-.vscode/**
-typings/**
-out/test/**
-test/**
-src/**
-**/*.map
-.gitignore
-tsconfig.json
-vsc-extension-quickstart.md
+**
+!LICENSE
+!dist/extension.js
+!images/logo.png

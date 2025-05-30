@@ -3,7 +3,7 @@
 	"displayName": "GitHub Rate Limit Monitor",
 	"description": "Monitors and displays the GitHub API rate limit status",
 	"version": "0.0.1",
-	"publisher": "justingrote",
+	"publisher": "justin-grote",
 	"private": true,
 	"license": "MIT",
 	"repository": {
@@ -19,20 +19,21 @@
 	"categories": [
 		"Other"
 	],
+	"icon": "images/logo.png",
 	"activationEvents": [
 		"onStartupFinished"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
+		"vscode:prepublish": "pnpm run build",
 		"lint": "eslint",
-		"watch": "tsc -watch -p ./"
+		"build": "esbuild src/extension.ts --bundle --platform=node --target=node20 --outfile=dist/extension.js --external:vscode --format=cjs"
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.13.0",
 		"@stylistic/eslint-plugin": "^2.9.0",
 		"@types/vscode": "^1.100.0",
+		"esbuild": "^0.25.5",
 		"eslint": "^9.13.0",
 		"typescript": "^5.8.2",
 		"typescript-eslint": "^8.26.0"
