@@ -2,7 +2,7 @@
 	"name": "github-ratelimit",
 	"displayName": "GitHub Rate Limit Monitor",
 	"description": "Monitors and displays the GitHub API rate limit status",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "justin-grote",
 	"private": true,
 	"license": "MIT",
