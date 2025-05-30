@@ -49,25 +49,44 @@ async function pollAndDisplayRateLimit() {
 
 		const octokit = new Octokit({ auth: session.accessToken });
 		const response = await octokit.request('GET /rate_limit');
-		const headers = response.headers;
-		const remaining = headers['x-ratelimit-remaining'];
-		const reset = headers['x-ratelimit-reset'];
+		const resources = response.data.resources;
 
-		if (!reset) {
-			throw new Error('Invalid reset time from GitHub API');
-		}
-		const resetDate = new Date(Number(reset) * 1000);
+		// Build tooltip with all resource rate limits as a markdown table
 		const now = new Date();
-		const diffMs = resetDate.getTime() - now.getTime();
-		const resetTime = humanizeDuration(diffMs);
+		const tableRows: string[] = [
+			'| Resource | Left | Reset |',
+			'|----------|-----:|------:|'
+		];
+		for (const [name, info] of Object.entries(resources)) {
+			if (typeof info !== 'object' || info === null) continue;
+			const remaining = info.remaining;
+			const reset = info.reset;
+			if (typeof remaining !== 'number' || typeof reset !== 'number') continue;
+			const resetDate = new Date(reset * 1000);
+			const diffMs = resetDate.getTime() - now.getTime();
+			const resetTime = humanizeDuration(diffMs);
+			tableRows.push(`| ${name} | ${remaining} | ${resetTime} |`);
+		}
+		const tooltipText: vscode.MarkdownString = new vscode.MarkdownString(tableRows.join('\n'));
 
-		myStatusBarItem.tooltip = `GitHub Rate limit remaining: ${remaining}`;
+		// Use core as the main status bar value
+		const core = resources.core;
+		const remaining = core?.remaining?.toString() ?? '?';
+		const reset = core?.reset;
+		let resetDate: Date | undefined;
+		let resetTime = '';
+		if (typeof reset === 'number') {
+			resetDate = new Date(reset * 1000);
+			const diffMs = resetDate.getTime() - now.getTime();
+			resetTime = humanizeDuration(diffMs);
+		}
+
 		if (remaining === '0') {
 			if (!exceededDate) {
 				exceededDate = now;
 			}
 			myStatusBarItem.text = `$(github) Reset: ${resetTime}`;
-			myStatusBarItem.tooltip = `GitHub Rate limit exceeded at or before ${exceededDate.toLocaleTimeString()}! Resets at ${resetDate.toLocaleTimeString()}`;
+			myStatusBarItem.tooltip = `GitHub Rate limit exceeded at or before ${exceededDate.toLocaleTimeString()}! Resets at ${resetDate?.toLocaleTimeString()}` + '\n' + tooltipText;
 			myStatusBarItem.color = 'red';
 			vscode.window.showWarningMessage(`$(alert) GitHub Rate limit exceeded! Resets at: ${resetTime}`);
 		} else {
@@ -76,7 +95,7 @@ async function pollAndDisplayRateLimit() {
 			}
 			myStatusBarItem.text = `$(github) ${remaining}`;
 			myStatusBarItem.color = undefined;
-			myStatusBarItem.tooltip = `Rate limit resets at ${resetDate.toLocaleTimeString()} (${resetTime})`;
+			myStatusBarItem.tooltip = tooltipText;
 		}
 	} catch (err: any) {
 		myStatusBarItem.text = `$(github) Error: ${err.message}`;
@@ -90,6 +109,6 @@ function humanizeDuration(ms: number): string {
 	const totalSeconds = Math.floor(ms / 1000);
 	const minutes = Math.floor(totalSeconds / 60);
 	const seconds = totalSeconds % 60;
-	if (minutes > 0) return `${minutes}m`
-	return `${seconds}s`
+	if (minutes > 0) return `${minutes}m`;
+	return `${seconds}s`;
 }
