@@ -38,6 +38,8 @@ export async function activate({ subscriptions }: vscode.ExtensionContext) {
 	});
 }
 
+// If set, ignore further rate limit exceed notifications
+let ignoreUntil = new Date();
 async function pollAndDisplayRateLimit() {
 	try {
 		const session = await vscode.authentication.getSession('github', ['read:user']);
@@ -81,6 +83,7 @@ async function pollAndDisplayRateLimit() {
 			resetTime = humanizeDuration(diffMs);
 		}
 
+
 		if (remaining === '0') {
 			if (!exceededDate) {
 				exceededDate = now;
@@ -88,7 +91,13 @@ async function pollAndDisplayRateLimit() {
 			myStatusBarItem.text = `$(github) Reset: ${resetTime}`;
 			myStatusBarItem.tooltip = `GitHub Rate limit exceeded at or before ${exceededDate.toLocaleTimeString()}! Resets at ${resetDate?.toLocaleTimeString()}` + '\n' + tooltipText;
 			myStatusBarItem.color = 'red';
-			vscode.window.showWarningMessage(`$(alert) GitHub Rate limit exceeded! Resets at: ${resetTime}`);
+
+			if (ignoreUntil < now) {
+				vscode.window.showWarningMessage(`GitHub Rate limit exceeded! Resets at: ${resetTime}`);
+			}
+
+			// Set ignoreUntil to the next reset time plus a buffer of 1 minute
+			ignoreUntil = new Date((resetDate?.getTime() ?? now.getTime()) + 60000);
 		} else {
 			if (exceededDate) {
 				exceededDate = undefined; // Reset exceeded date if we are back to normal
