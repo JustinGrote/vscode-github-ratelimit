@@ -3,9 +3,12 @@
 
 This Visual Studio Code extension monitors and displays your current GitHub API rate limit status in the status bar. 
 
+It helps you avoid hitting GitHub's API rate limits by providing real-time feedback and alerts.
+
 ![alt text](images/README/image-1.png)
 
-It helps you avoid hitting GitHub's API rate limits by providing real-time feedback and alerts.
+By clicking the status bar icon, you can get a real time history graph of your API rate limit. Only the core is shown by default but you can click the legend icons on the right to reveal the more detailed API rate limits.
+![alt text](images/README/image.png)
 
 ## Features
 - Shows the number of remaining GitHub API requests in the status bar.
